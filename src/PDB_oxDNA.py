@@ -64,7 +64,7 @@ if __name__ == '__main__':
         old_chain = ""
         for line in f.readlines():
             line = line.strip()
-            if line.startswith("ATOM"):
+            if line.startswith("ATOM") and any(nucleotide in line for nucleotide in ["DA", "DC", "DG", "DT", "DU"]):
                 na = Atom(line)
                 if old_chain != "":
                     if na.chain_id != old_chain and len(strand) != 0:
@@ -100,7 +100,8 @@ if __name__ == '__main__':
                         pdb_strands.append(strand)
                         strand = []
             elif line.startswith("TER"):
-                pdb_strands.append(strand)
+                if len(strand) > 0:
+                    pdb_strands.append(strand)
                 strand = []
             # if the file does not contain any TER line we need to manually add the current strand to the list of strands
             elif line == "END" and len(pdb_strands) == 0 and len(strand) > 0:
